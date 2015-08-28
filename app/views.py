@@ -51,6 +51,12 @@ def home():
     """
     form = LoginForm()
     new_book_list = Book.query.order_by('-id').all()[:9]
+    new_frontend_list = Book.query.filter_by(tag=u"前端").order_by('-id').all()[:9]
+    new_backend_list = Book.query.filter_by(tag=u"后台").order_by('-id').all()[:9]
+    new_internet_list = Book.query.filter_by(tag=u"互联网").order_by('-id').all()[:9]
+    new_andriod_list = Book.query.filter_by(tag=u"安卓").order_by('-id').all()[:9]
+    new_design_list = Book.query.filter_by(tag=u"设计").order_by('-id').all()[:9]
+    new_other_list = Book.query.filter_by(tag=u"其他").order_by('-id').all()[:9]
     get_book_list = Book.query.filter_by(status=True).order_by('start desc').all()[:2]
 
     if form.validate_on_submit():
@@ -60,8 +66,16 @@ def home():
             return redirect(url_for('user', username=current_user.username))
         flash('用户名或密码错误!')
 
-    return render_template('home.html', new_book_list=new_book_list,
-                           get_book_list=get_book_list, form=form)
+    return render_template(
+        'home.html', new_book_list=new_book_list,
+         new_other_list=new_other_list,
+         new_design_list=new_design_list,
+         new_andriod_list=new_andriod_list,
+         new_internet_list=new_internet_list,
+         new_backend_list=new_backend_list,
+         new_frontend_list=new_frontend_list,
+         get_book_list=get_book_list, form=form
+    )
 
 
 # 对所有访客可见
@@ -195,8 +209,10 @@ def logout():
 def user(username):
     """
     用户个人信息页
-        显示该用户历史借阅
+
         显示该用户快要过期的书（3天为界）
+        显示该用户个人借阅的书（显示全部）
+        显示该用户已经过期的书（显示全部）
 
         提供用户还书按钮
 
@@ -229,4 +245,5 @@ def user(username):
 
     return render_template('user.html', username=username,
                            time_done_book=time_done_book[:2],
+                           time_dead_book=time_dead_book,
                            book_list=book_list)
